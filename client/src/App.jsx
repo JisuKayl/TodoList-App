@@ -27,6 +27,15 @@ const App = () => {
     }
   };
 
+  const deleteAllTasks = async () => {
+    try {
+      await axios.delete("http://localhost:3000/tasks");
+      fetchTasks();
+    } catch (err) {
+      console.error("Failed to delete all tasks", err);
+    }
+  };
+
   useEffect(() => {
     fetchTasks();
   }, []);
@@ -47,11 +56,12 @@ const App = () => {
         onChange={(e) => setDescription(e.target.value)}
       />
       <button onClick={addTask}>Add Task</button>
+      <button onClick={deleteAllTasks}>Delete All Tasks</button>
       <ul>
-        {tasks.map((task) => {
+        {tasks.map((task, index) => {
           return (
             <li key={task.id}>
-              Title: {task.title} - Description: {task.description}
+              {index + 1}. Title: {task.title} - Description: {task.description}
             </li>
           );
         })}
