@@ -56,6 +56,16 @@ app.get("/tasks/:id", async (req, res) => {
 app.post("/tasks", async (req, res) => {
   try {
     const { title, description } = req.body;
+
+    const [existingTitle] = await db.query(
+      "SELECT * FROM tasks WHERE title = ?",
+      [title]
+    );
+
+    if (existingTitle.length > 0) {
+      return res.status(400).json({ error: "Title must be unique" });
+    }
+
     const [result] = await db.query(
       "INSERT INTO tasks (title, description) values (?, ?)",
       [title, description || "(No Description)"]
@@ -73,6 +83,15 @@ app.put("/tasks/:id", async (req, res) => {
   try {
     const { id } = req.params;
     const { title, description } = req.body;
+
+    const [existingTitle] = await db.query(
+      "SELECT * FROM tasks WHERE title = ? AND id != ?",
+      [title, id]
+    );
+
+    if (existingTitle.length > 0) {
+      return res.status(400).json({ error: "Title must be unique" });
+    }
 
     const [result] = await db.query(
       "UPDATE tasks SET title = ?, description = ? WHERE id = ?",
