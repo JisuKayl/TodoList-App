@@ -38,8 +38,9 @@ app.get("/tasks", async (req, res) => {
 });
 
 app.get("/tasks/:id", async (req, res) => {
+  const { id } = req.params;
+
   try {
-    const { id } = req.params;
     const [task] = await db.query("SELECT * FROM tasks WHERE id = ?", id);
 
     if (task.length === 0) {
@@ -54,9 +55,9 @@ app.get("/tasks/:id", async (req, res) => {
 });
 
 app.post("/tasks", async (req, res) => {
-  try {
-    const { title, description } = req.body;
+  const { title, description } = req.body;
 
+  try {
     const [existingTitle] = await db.query(
       "SELECT * FROM tasks WHERE title = ?",
       [title]
@@ -80,10 +81,10 @@ app.post("/tasks", async (req, res) => {
 });
 
 app.put("/tasks/:id", async (req, res) => {
-  try {
-    const { id } = req.params;
-    const { title, description } = req.body;
+  const { id } = req.params;
+  const { title, description } = req.body;
 
+  try {
     const [existingTitle] = await db.query(
       "SELECT * FROM tasks WHERE title = ? AND id != ?",
       [title, id]
@@ -95,7 +96,7 @@ app.put("/tasks/:id", async (req, res) => {
 
     const [result] = await db.query(
       "UPDATE tasks SET title = ?, description = ? WHERE id = ?",
-      [title, description, id]
+      [title, description || "(No Description)", id]
     );
 
     if (result.affectedRows === 0) {
@@ -125,8 +126,9 @@ app.delete("/tasks", async (req, res) => {
 });
 
 app.delete("/tasks/:id", async (req, res) => {
+  const { id } = req.params;
+
   try {
-    const { id } = req.params;
     const [result] = await db.query("DELETE FROM tasks WHERE id = ?", [id]);
 
     if (result.affectedRows === 0) {
