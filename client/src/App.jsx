@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-vars */
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 
@@ -103,25 +102,30 @@ const App = () => {
       <button onClick={addTask}>Add Task</button>
       <button onClick={deleteAllTasks}>Delete All Tasks</button>
       <button onClick={clearAllFields}>Clear</button>
-      <ul>
-        {tasks.map((task, index) => {
-          return (
-            <li key={task.id}>
-              {index + 1}. Title: {task.title} - Description: {task.description}
-              <button onClick={() => fetchTaskById(task.id)}>View</button>
-              <button
-                onClick={() => {
-                  updateTask(task.id);
-                }}
-              >
-                Update
-              </button>
-              <button onClick={() => deleteTaskById(task.id)}>Delete</button>
-              <button></button>
-            </li>
-          );
-        })}
-      </ul>
+      {tasks.length === 0 ? (
+        <p>No Tasks Available</p>
+      ) : (
+        <ul>
+          {tasks.map((task, index) => {
+            return (
+              <li key={task.id}>
+                {index + 1}. Title: {task.title} - Description:{" "}
+                {task.description}
+                <button onClick={() => fetchTaskById(task.id)}>View</button>
+                <button
+                  onClick={() => {
+                    updateTask(task.id);
+                  }}
+                >
+                  Update
+                </button>
+                <button onClick={() => deleteTaskById(task.id)}>Delete</button>
+                <button></button>
+              </li>
+            );
+          })}
+        </ul>
+      )}
     </>
   );
 };
