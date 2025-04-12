@@ -5,14 +5,11 @@ const App = () => {
   const [tasks, setTasks] = useState([]);
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
+  const [editingId, setEditingId] = useState(null);
 
   const clearAllFields = () => {
-    try {
-      setTitle("");
-      setDescription("");
-    } catch (err) {
-      console.error("Failed to clear fields", err);
-    }
+    setTitle("");
+    setDescription("");
   };
 
   const fetchTasks = async () => {
@@ -47,15 +44,35 @@ const App = () => {
     }
   };
 
-  const updateTask = async (id) => {
-    if (!id) return;
+  // const updateTask = async (id) => {
+  //   if (!id) return;
+  //   try {
+  //     await axios.put(`http://localhost:3000/tasks/${id}`, {
+  //       title,
+  //       description,
+  //     });
+  //     clearAllFields();
+  //     fetchTasks();
+  //   } catch (err) {
+  //     console.error("Failed to update task", err);
+  //   }
+  // };
+
+  const handleEdit = (task) => {
+    setEditingId(task.id);
+    setTitle(task.title);
+    setDescription(task.description);
+  };
+
+  const handleSave = async () => {
     try {
-      await axios.put(`http://localhost:3000/tasks/${id}`, {
+      await axios.put(`http://localhost:3000/tasks/${editingId}`, {
         title,
         description,
       });
       clearAllFields();
       fetchTasks();
+      setEditingId(null);
     } catch (err) {
       console.error("Failed to update task", err);
     }
@@ -99,7 +116,16 @@ const App = () => {
         value={description}
         onChange={(e) => setDescription(e.target.value)}
       />
-      <button onClick={addTask}>Add Task</button>
+
+      {editingId ? (
+        <>
+          <button onClick={handleSave}>Save</button>
+          <button onClick={clearAllFields}>Cancel</button>
+        </>
+      ) : (
+        <button onClick={addTask}>Add Task</button>
+      )}
+
       <button onClick={deleteAllTasks}>Delete All Tasks</button>
       <button onClick={clearAllFields}>Clear</button>
       {tasks.length === 0 ? (
@@ -114,10 +140,10 @@ const App = () => {
                 <button onClick={() => fetchTaskById(task.id)}>View</button>
                 <button
                   onClick={() => {
-                    updateTask(task.id);
+                    handleEdit(task);
                   }}
                 >
-                  Update
+                  Edit
                 </button>
                 <button onClick={() => deleteTaskById(task.id)}>Delete</button>
                 <button></button>
