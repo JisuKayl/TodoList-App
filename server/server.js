@@ -57,6 +57,10 @@ app.get("/tasks/:id", async (req, res) => {
 app.post("/tasks", async (req, res) => {
   const { title, description } = req.body;
 
+  if (!title || !title.trim()) {
+    return res.status(400).json({ error: "Title is required" });
+  }
+
   try {
     const [existingTitle] = await db.query(
       "SELECT * FROM tasks WHERE title = ?",
@@ -83,6 +87,10 @@ app.post("/tasks", async (req, res) => {
 app.put("/tasks/:id", async (req, res) => {
   const { id } = req.params;
   const { title, description } = req.body;
+
+  if (!title || !title.trim()) {
+    return res.status(400).json({ error: "Title is required" });
+  }
 
   try {
     const [existingTitle] = await db.query(

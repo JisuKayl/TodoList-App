@@ -35,6 +35,11 @@ const App = () => {
   };
 
   const addTask = async () => {
+    if (!title.trim()) {
+      alert("Title is required");
+      return;
+    }
+
     try {
       await axios.post("http://localhost:3000/tasks", { title, description });
       clearAllFields();
@@ -65,6 +70,11 @@ const App = () => {
   };
 
   const handleSave = async () => {
+    if (!title.trim()) {
+      alert("Title is required");
+      return;
+    }
+
     try {
       await axios.put(`http://localhost:3000/tasks/${editingId}`, {
         title,
