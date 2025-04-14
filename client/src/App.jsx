@@ -5,9 +5,12 @@ const App = () => {
   const [tasks, setTasks] = useState([]);
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
+  const [viewingId, setViewingId] = useState(null);
   const [editingId, setEditingId] = useState(null);
 
-  const clearAllFields = () => {
+  const resetFormState = () => {
+    setViewingId(null);
+    setEditingId(null);
     setTitle("");
     setDescription("");
   };
@@ -27,6 +30,7 @@ const App = () => {
     try {
       const { data } = await axios.get(`http://localhost:3000/tasks/${id}`);
       console.log(data);
+      setViewingId(data.id);
       setTitle(data.title);
       setDescription(data.description);
     } catch (err) {
@@ -42,7 +46,7 @@ const App = () => {
 
     try {
       await axios.post("http://localhost:3000/tasks", { title, description });
-      clearAllFields();
+      resetFormState();
       fetchTasks();
     } catch (err) {
       console.error("Failed to add tasks", err);
@@ -80,9 +84,8 @@ const App = () => {
         title,
         description,
       });
-      clearAllFields();
+      resetFormState();
       fetchTasks();
-      setEditingId(null);
     } catch (err) {
       console.error("Failed to update task", err);
     }
@@ -119,25 +122,27 @@ const App = () => {
         placeholder="Title"
         value={title}
         onChange={(e) => setTitle(e.target.value)}
+        disabled={viewingId}
       />
       <input
         type="text"
         placeholder="Description"
         value={description}
         onChange={(e) => setDescription(e.target.value)}
+        disabled={viewingId}
       />
 
       {editingId ? (
         <>
           <button onClick={handleSave}>Save</button>
-          <button onClick={clearAllFields}>Cancel</button>
+          <button onClick={resetFormState}>Cancel</button>
         </>
       ) : (
         <button onClick={addTask}>Add Task</button>
       )}
 
       <button onClick={deleteAllTasks}>Delete All Tasks</button>
-      <button onClick={clearAllFields}>Clear</button>
+      <button onClick={resetFormState}>Clear</button>
       {tasks.length === 0 ? (
         <p>No Tasks Available</p>
       ) : (
