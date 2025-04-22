@@ -18,10 +18,14 @@ const db = mysql
   })
   .promise();
 
-db.connect((err) => {
-  if (err) throw err;
-  console.log("Connected to MySQL");
-});
+(async () => {
+  try {
+    await db.query("SELECT 1");
+    console.log("Connected to MySQL");
+  } catch (err) {
+    console.error("MySQL connection failed", err);
+  }
+})();
 
 app.get("/", (req, res) => {
   res.json("Test");
@@ -40,8 +44,16 @@ app.get("/tasks", async (req, res) => {
 app.get("/tasks/:id", async (req, res) => {
   const { id } = req.params;
 
+  if (isNaN(id)) {
+    return res.status(400).json({ error: "Invalid ID" });
+  }
+
+  const parsedId = parseInt(id, 10);
+
   try {
-    const [task] = await db.query("SELECT * FROM tasks WHERE id = ?", id);
+    const [task] = await db.query("SELECT * FROM tasks WHERE id = ?", [
+      parsedId,
+    ]);
 
     if (task.length === 0) {
       return res.status(404).json({ error: "Task not found" });
@@ -61,6 +73,8 @@ app.post("/tasks", async (req, res) => {
     return res.status(400).json({ error: "Title is required" });
   }
 
+  const desc = description?.trim() || "(No Description)";
+
   try {
     const [existingTitle] = await db.query(
       "SELECT * FROM tasks WHERE title = ?",
@@ -73,7 +87,7 @@ app.post("/tasks", async (req, res) => {
 
     const [result] = await db.query(
       "INSERT INTO tasks (title, description) values (?, ?)",
-      [title, description || "(No Description)"]
+      [title, desc]
     );
     res
       .status(201)
@@ -88,14 +102,21 @@ app.put("/tasks/:id", async (req, res) => {
   const { id } = req.params;
   const { title, description } = req.body;
 
+  if (isNaN(id)) {
+    return res.status(400).json({ error: "Invalid ID" });
+  }
+
   if (!title || !title.trim()) {
     return res.status(400).json({ error: "Title is required" });
   }
 
+  const parsedId = parseInt(id, 10);
+  const desc = description?.trim() || "(No Description)";
+
   try {
     const [existingTitle] = await db.query(
       "SELECT * FROM tasks WHERE title = ? AND id != ?",
-      [title, id]
+      [title, parsedId]
     );
 
     if (existingTitle.length > 0) {
@@ -104,7 +125,7 @@ app.put("/tasks/:id", async (req, res) => {
 
     const [result] = await db.query(
       "UPDATE tasks SET title = ?, description = ? WHERE id = ?",
-      [title, description || "(No Description)", id]
+      [title, desc, parsedId]
     );
 
     if (result.affectedRows === 0) {
@@ -136,8 +157,16 @@ app.delete("/tasks", async (req, res) => {
 app.delete("/tasks/:id", async (req, res) => {
   const { id } = req.params;
 
+  if (isNaN(id)) {
+    return res.status(400).json({ error: "Invalid ID" });
+  }
+
+  const parsedId = parseInt(id, 10);
+
   try {
-    const [result] = await db.query("DELETE FROM tasks WHERE id = ?", [id]);
+    const [result] = await db.query("DELETE FROM tasks WHERE id = ?", [
+      parsedId,
+    ]);
 
     if (result.affectedRows === 0) {
       return res.status(404).json({ error: "Task not found" });

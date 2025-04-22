@@ -165,7 +165,6 @@ const App = () => {
                   Edit
                 </button>
                 <button onClick={() => deleteTaskById(task.id)}>Delete</button>
-                <button></button>
               </li>
             );
           })}
