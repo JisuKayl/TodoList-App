@@ -30,6 +30,7 @@ const App = () => {
     try {
       const { data } = await axios.get(`http://localhost:3000/tasks/${id}`);
       console.log(data);
+      setEditingId(null);
       setViewingId(data.id);
       setTitle(data.title);
       setDescription(data.description);
@@ -68,6 +69,7 @@ const App = () => {
   // };
 
   const handleEdit = (task) => {
+    setViewingId(null);
     setEditingId(task.id);
     setTitle(task.title);
     setDescription(task.description);
@@ -94,6 +96,7 @@ const App = () => {
   const deleteAllTasks = async () => {
     try {
       await axios.delete("http://localhost:3000/tasks");
+      resetFormState();
       fetchTasks();
     } catch (err) {
       console.error("Failed to delete all tasks", err);
@@ -104,6 +107,7 @@ const App = () => {
     if (!id) return;
     try {
       await axios.delete(`http://localhost:3000/tasks/${id}`);
+      resetFormState();
       fetchTasks();
     } catch (err) {
       console.error("Failed to delete task", err);
