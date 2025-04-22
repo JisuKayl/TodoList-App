@@ -69,16 +69,17 @@ app.get("/tasks/:id", async (req, res) => {
 app.post("/tasks", async (req, res) => {
   const { title, description } = req.body;
 
-  if (!title || !title.trim()) {
+  const trimmedTitle = title.trim();
+  const trimmedDesc = description?.trim() || "(No Description)";
+
+  if (!trimmedTitle) {
     return res.status(400).json({ error: "Title is required" });
   }
-
-  const desc = description?.trim() || "(No Description)";
 
   try {
     const [existingTitle] = await db.query(
       "SELECT * FROM tasks WHERE title = ?",
-      [title]
+      [trimmedTitle]
     );
 
     if (existingTitle.length > 0) {
@@ -87,7 +88,7 @@ app.post("/tasks", async (req, res) => {
 
     const [result] = await db.query(
       "INSERT INTO tasks (title, description) values (?, ?)",
-      [title, desc]
+      [trimmedTitle, trimmedDesc]
     );
     res
       .status(201)
@@ -102,21 +103,23 @@ app.put("/tasks/:id", async (req, res) => {
   const { id } = req.params;
   const { title, description } = req.body;
 
+  const trimmedTitle = title.trim();
+  const trimmedDesc = description?.trim() || "(No Description)";
+
   if (isNaN(id)) {
     return res.status(400).json({ error: "Invalid ID" });
   }
 
-  if (!title || !title.trim()) {
+  if (!trimmedTitle) {
     return res.status(400).json({ error: "Title is required" });
   }
 
   const parsedId = parseInt(id, 10);
-  const desc = description?.trim() || "(No Description)";
 
   try {
     const [existingTitle] = await db.query(
       "SELECT * FROM tasks WHERE title = ? AND id != ?",
-      [title, parsedId]
+      [trimmedTitle, parsedId]
     );
 
     if (existingTitle.length > 0) {
@@ -125,7 +128,7 @@ app.put("/tasks/:id", async (req, res) => {
 
     const [result] = await db.query(
       "UPDATE tasks SET title = ?, description = ? WHERE id = ?",
-      [title, desc, parsedId]
+      [trimmedTitle, trimmedDesc, parsedId]
     );
 
     if (result.affectedRows === 0) {
