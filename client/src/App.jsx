@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 
+const API_URL = "http://localhost:3000";
+
 const App = () => {
   const [tasks, setTasks] = useState([]);
   const [title, setTitle] = useState("");
@@ -15,9 +17,32 @@ const App = () => {
     setDescription("");
   };
 
+  const checkDuplicateTitle = async (title, excludeCurrentEditingId = null) => {
+    try {
+      const { data } = await axios.get(`${API_URL}/tasks`);
+      return data.some(
+        (task) =>
+          task.id !== excludeCurrentEditingId &&
+          task.title.toLowerCase() === title.trim().toLowerCase()
+      );
+    } catch (err) {
+      console.error("Failed to check duplicate title", err);
+      return false;
+    }
+  };
+
+  const handleDuplicateCheck = async () => {
+    const isDuplicate = await checkDuplicateTitle(title, editingId);
+    if (isDuplicate) {
+      alert("Title is already taken");
+      return true;
+    }
+    return false;
+  };
+
   const fetchTasks = async () => {
     try {
-      const { data } = await axios.get("http://localhost:3000/tasks");
+      const { data } = await axios.get(`${API_URL}/tasks`);
       setTasks(data);
     } catch (err) {
       console.error("Failed to fetch tasks", err);
@@ -28,7 +53,7 @@ const App = () => {
     if (!id) return;
 
     try {
-      const { data } = await axios.get(`http://localhost:3000/tasks/${id}`);
+      const { data } = await axios.get(`${API_URL}/tasks/${id}`);
       console.log(data);
       setEditingId(null);
       setViewingId(data.id);
@@ -45,8 +70,12 @@ const App = () => {
       return;
     }
 
+    const isDuplicate = await handleDuplicateCheck(title);
+
+    if (isDuplicate) return;
+
     try {
-      await axios.post("http://localhost:3000/tasks", { title, description });
+      await axios.post(`${API_URL}/tasks`, { title, description });
       resetFormState();
       fetchTasks();
     } catch (err) {
@@ -81,8 +110,11 @@ const App = () => {
       return;
     }
 
+    const isDuplicate = await handleDuplicateCheck();
+    if (isDuplicate) return;
+
     try {
-      await axios.put(`http://localhost:3000/tasks/${editingId}`, {
+      await axios.put(`${API_URL}/tasks/${editingId}`, {
         title,
         description,
       });
@@ -95,7 +127,7 @@ const App = () => {
 
   const deleteAllTasks = async () => {
     try {
-      await axios.delete("http://localhost:3000/tasks");
+      await axios.delete(`${API_URL}/tasks`);
       resetFormState();
       fetchTasks();
     } catch (err) {
@@ -106,7 +138,7 @@ const App = () => {
   const deleteTaskById = async (id) => {
     if (!id) return;
     try {
-      await axios.delete(`http://localhost:3000/tasks/${id}`);
+      await axios.delete(`${API_URL}/tasks/${id}`);
       resetFormState();
       fetchTasks();
     } catch (err) {
