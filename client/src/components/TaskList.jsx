@@ -52,30 +52,34 @@ const TaskList = () => {
   return (
     <div>
       <button onClick={handleDeleteAllTasks}>Delete All Tasks</button>
-      <ul>
-        {tasks.map((task, index) => {
-          return (
-            <li key={index}>
-              {index + 1}. {task.title} - {task.description}
-              <button
-                onClick={() => {
-                  handleViewTask(task.id);
-                }}
-              >
-                View
-              </button>
-              <button>Edit</button>
-              <button
-                onClick={() => {
-                  handleDeleteTask(task.id);
-                }}
-              >
-                Delete
-              </button>
-            </li>
-          );
-        })}
-      </ul>
+      {tasks.length === 0 ? (
+        <p>No tasks available.</p>
+      ) : (
+        <ul>
+          {tasks.map((task, index) => {
+            return (
+              <li key={index}>
+                {index + 1}. {task.title} - {task.description}
+                <button
+                  onClick={() => {
+                    handleViewTask(task.id);
+                  }}
+                >
+                  View
+                </button>
+                <button>Edit</button>
+                <button
+                  onClick={() => {
+                    handleDeleteTask(task.id);
+                  }}
+                >
+                  Delete
+                </button>
+              </li>
+            );
+          })}
+        </ul>
+      )}
     </div>
   );
 };
