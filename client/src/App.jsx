@@ -1,10 +1,10 @@
 import React from "react";
-import TaskList from "./components/TaskList";
+import TaskPage from "./pages/TaskPage";
 
 const App = () => {
   return (
     <div>
-      <TaskList />
+      <TaskPage />
     </div>
   );
 };
