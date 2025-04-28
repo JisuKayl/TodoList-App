@@ -5,7 +5,7 @@ import {
   deleteAllTasks,
 } from "../services/taskService";
 
-const TaskForm = () => {
+const TaskForm = ({ loadTasks }) => {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
 
@@ -29,11 +29,17 @@ const TaskForm = () => {
     await addTask(title, description);
     alert("Task added successfully!");
     resetFormState();
+    loadTasks();
   };
 
   const handleDeleteAllTasks = async () => {
+    const confirmDelete = confirm("Are you sure you want to delete all tasks?");
+    if (!confirmDelete) return;
+
     await deleteAllTasks();
+    alert("All tasks deleted successfully!");
     resetFormState();
+    loadTasks();
   };
 
   return (

@@ -1,18 +1,7 @@
-import React, { useState, useEffect } from "react";
-import {
-  fetchTasks,
-  fetchTaskById,
-  deleteTaskById,
-} from "../services/taskService";
+import React from "react";
+import { fetchTaskById, deleteTaskById } from "../services/taskService";
 
-const TaskList = () => {
-  const [tasks, setTasks] = useState([]);
-
-  const loadTasks = async () => {
-    const taskData = await fetchTasks();
-    setTasks(taskData);
-  };
-
+const TaskList = ({ tasks, loadTasks }) => {
   const handleViewTask = async (id) => {
     const task = await fetchTaskById(id);
     console.log("Task Details:", task);
@@ -22,10 +11,6 @@ const TaskList = () => {
     await deleteTaskById(id);
     loadTasks();
   };
-
-  useEffect(() => {
-    loadTasks();
-  }, []);
 
   return (
     <div>
