@@ -6,6 +6,7 @@ import TaskList from "../components/TaskList";
 const TaskPage = () => {
   const [tasks, setTasks] = useState([]);
   const [selectedTask, setSelectedTask] = useState(null);
+  const [mode, setMode] = useState("add");
 
   const loadTasks = async () => {
     try {
@@ -28,11 +29,14 @@ const TaskPage = () => {
         loadTasks={loadTasks}
         selectedTask={selectedTask}
         setSelectedTask={setSelectedTask}
+        mode={mode}
+        setMode={setMode}
       />
       <TaskList
         tasks={tasks}
         loadTasks={loadTasks}
         setSelectedTask={setSelectedTask}
+        setMode={setMode}
       />
     </div>
   );

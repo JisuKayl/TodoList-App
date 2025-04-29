@@ -1,11 +1,19 @@
 import React, { useEffect, useState } from "react";
 import {
   addTask,
+  updateTask,
   checkDuplicateTitle,
   deleteAllTasks,
 } from "../services/taskService";
 
-const TaskForm = ({ tasks, loadTasks, selectedTask, setSelectedTask }) => {
+const TaskForm = ({
+  tasks,
+  loadTasks,
+  selectedTask,
+  setSelectedTask,
+  mode,
+  setMode,
+}) => {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
 
@@ -22,6 +30,7 @@ const TaskForm = ({ tasks, loadTasks, selectedTask, setSelectedTask }) => {
     setTitle("");
     setDescription("");
     setSelectedTask(null);
+    setMode("add");
   };
 
   const handleAddTask = async () => {
@@ -44,6 +53,29 @@ const TaskForm = ({ tasks, loadTasks, selectedTask, setSelectedTask }) => {
     } catch (err) {
       console.error("Failed to add task", err);
       alert("Failed to add task. Please try again.");
+    }
+  };
+
+  const handleUpdateTask = async () => {
+    if (!title.trim()) {
+      alert("Title is required.");
+      return;
+    }
+
+    try {
+      const isDuplicate = await checkDuplicateTitle(title, selectedTask.id);
+      if (isDuplicate) {
+        alert("Title is already taken. Please choose a different title.");
+        return;
+      }
+
+      await updateTask(selectedTask.id, title, description);
+      alert("Task updated successfully!");
+      resetFormState();
+      loadTasks();
+    } catch (err) {
+      console.error("Failed to update task", err);
+      alert("Failed to update task. Please try again.");
     }
   };
 
@@ -76,6 +108,7 @@ const TaskForm = ({ tasks, loadTasks, selectedTask, setSelectedTask }) => {
           value={title}
           onChange={(e) => setTitle(e.target.value)}
           placeholder="title"
+          disabled={mode === "view"}
         />
       </div>
       <div>
@@ -85,9 +118,19 @@ const TaskForm = ({ tasks, loadTasks, selectedTask, setSelectedTask }) => {
           value={description}
           onChange={(e) => setDescription(e.target.value)}
           placeholder="description"
+          disabled={mode === "view"}
         />
       </div>
-      <button onClick={handleAddTask}>Add Task</button>
+
+      {mode === "add" && <button onClick={handleAddTask}>Add Task</button>}
+
+      {mode === "edit" && (
+        <>
+          <button onClick={handleUpdateTask}>Save</button>
+          <button onClick={resetFormState}>Cancel</button>
+        </>
+      )}
+
       <button onClick={handleDeleteAllTasks}>Delete All Tasks</button>
       <button onClick={resetFormState}>Clear</button>
     </div>

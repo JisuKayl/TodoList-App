@@ -1,7 +1,7 @@
 import React from "react";
 import { fetchTaskById, deleteTaskById } from "../services/taskService";
 
-const TaskList = ({ tasks, loadTasks, setSelectedTask }) => {
+const TaskList = ({ tasks, loadTasks, setSelectedTask, setMode }) => {
   const handleSelectTask = async (id) => {
     try {
       const task = await fetchTaskById(id);
@@ -40,6 +40,7 @@ const TaskList = ({ tasks, loadTasks, setSelectedTask }) => {
                 <button
                   onClick={() => {
                     handleSelectTask(task.id);
+                    setMode("view");
                   }}
                 >
                   View
@@ -47,6 +48,7 @@ const TaskList = ({ tasks, loadTasks, setSelectedTask }) => {
                 <button
                   onClick={() => {
                     handleSelectTask(task.id);
+                    setMode("edit");
                   }}
                 >
                   Edit
