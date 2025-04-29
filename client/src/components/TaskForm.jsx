@@ -59,12 +59,14 @@ const TaskForm = ({ tasks, loadTasks }) => {
 
   return (
     <div>
+      <label>Title</label>
       <input
         type="text"
         value={title}
         onChange={(e) => setTitle(e.target.value)}
         placeholder="title"
       />
+      <label>Description</label>
       <input
         type="text"
         value={description}
