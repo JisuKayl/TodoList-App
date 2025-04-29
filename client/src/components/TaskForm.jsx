@@ -59,20 +59,24 @@ const TaskForm = ({ tasks, loadTasks }) => {
 
   return (
     <div>
-      <label>Title</label>
-      <input
-        type="text"
-        value={title}
-        onChange={(e) => setTitle(e.target.value)}
-        placeholder="title"
-      />
-      <label>Description</label>
-      <input
-        type="text"
-        value={description}
-        onChange={(e) => setDescription(e.target.value)}
-        placeholder="description"
-      />
+      <div>
+        <label>Title</label>
+        <input
+          type="text"
+          value={title}
+          onChange={(e) => setTitle(e.target.value)}
+          placeholder="title"
+        />
+      </div>
+      <div>
+        <label>Description</label>
+        <input
+          type="text"
+          value={description}
+          onChange={(e) => setDescription(e.target.value)}
+          placeholder="description"
+        />
+      </div>
       <button onClick={handleAddTask}>Add Task</button>
       <button onClick={handleDeleteAllTasks}>Delete All Tasks</button>
       <button onClick={resetFormState}>Clear</button>
