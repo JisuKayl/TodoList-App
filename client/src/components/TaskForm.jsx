@@ -5,7 +5,7 @@ import {
   deleteAllTasks,
 } from "../services/taskService";
 
-const TaskForm = ({ loadTasks }) => {
+const TaskForm = ({ tasks, loadTasks }) => {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
 
@@ -38,6 +38,11 @@ const TaskForm = ({ loadTasks }) => {
   };
 
   const handleDeleteAllTasks = async () => {
+    if (tasks.length === 0) {
+      alert("There are no tasks to delete.");
+      return;
+    }
+
     const confirmDelete = confirm("Are you sure you want to delete all tasks?");
     if (!confirmDelete) return;
 
@@ -48,12 +53,7 @@ const TaskForm = ({ loadTasks }) => {
       loadTasks();
     } catch (err) {
       console.error("Failed to delete all tasks", err);
-
-      if (err.response?.status === 404) {
-        alert("There are no tasks to delete.");
-      } else {
-        alert("Failed to delete all tasks.");
-      }
+      alert("Failed to delete all tasks.");
     }
   };
 

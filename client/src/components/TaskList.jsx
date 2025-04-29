@@ -14,6 +14,11 @@ const TaskList = ({ tasks, loadTasks }) => {
 
   const handleDeleteTask = async (id) => {
     try {
+      const confirmDelete = confirm(
+        "Are you sure you want to delete this task?"
+      );
+      if (!confirmDelete) return;
+
       await deleteTaskById(id);
       loadTasks();
     } catch (err) {

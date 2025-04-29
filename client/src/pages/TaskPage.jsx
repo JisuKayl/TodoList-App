@@ -22,7 +22,7 @@ const TaskPage = () => {
 
   return (
     <div>
-      <TaskForm loadTasks={loadTasks} />
+      <TaskForm tasks={tasks} loadTasks={loadTasks} />
       <TaskList tasks={tasks} loadTasks={loadTasks} />
     </div>
   );
