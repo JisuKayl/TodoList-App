@@ -16,30 +16,45 @@ const TaskForm = ({ loadTasks }) => {
 
   const handleAddTask = async () => {
     if (!title.trim()) {
-      alert("Title is required");
+      alert("Title is required.");
       return;
     }
 
-    const isDuplicate = await checkDuplicateTitle(title);
-    if (isDuplicate) {
-      alert("Title is already taken. Please choose a different title");
-      return;
-    }
+    try {
+      const isDuplicate = await checkDuplicateTitle(title);
+      if (isDuplicate) {
+        alert("Title is already taken. Please choose a different title.");
+        return;
+      }
 
-    await addTask(title, description);
-    alert("Task added successfully!");
-    resetFormState();
-    loadTasks();
+      await addTask(title, description);
+      alert("Task added successfully!");
+      resetFormState();
+      loadTasks();
+    } catch (err) {
+      console.error("Failed to add task", err);
+      alert("Failed to add task. Please try again.");
+    }
   };
 
   const handleDeleteAllTasks = async () => {
     const confirmDelete = confirm("Are you sure you want to delete all tasks?");
     if (!confirmDelete) return;
 
-    await deleteAllTasks();
-    alert("All tasks deleted successfully!");
-    resetFormState();
-    loadTasks();
+    try {
+      await deleteAllTasks();
+      alert("All tasks deleted successfully!");
+      resetFormState();
+      loadTasks();
+    } catch (err) {
+      console.error("Failed to delete all tasks", err);
+
+      if (err.response?.status === 404) {
+        alert("There are no tasks to delete.");
+      } else {
+        alert("Failed to delete all tasks.");
+      }
+    }
   };
 
   return (

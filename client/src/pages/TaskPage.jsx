@@ -7,8 +7,13 @@ const TaskPage = () => {
   const [tasks, setTasks] = useState([]);
 
   const loadTasks = async () => {
-    const taskData = await fetchTasks();
-    setTasks(taskData);
+    try {
+      const taskData = await fetchTasks();
+      setTasks(taskData);
+    } catch (err) {
+      console.error("Failed to load tasks", err);
+      alert("Failed to load tasks.");
+    }
   };
 
   useEffect(() => {
