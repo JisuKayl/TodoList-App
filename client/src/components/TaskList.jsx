@@ -1,11 +1,11 @@
 import React from "react";
 import { fetchTaskById, deleteTaskById } from "../services/taskService";
 
-const TaskList = ({ tasks, loadTasks }) => {
-  const handleViewTask = async (id) => {
+const TaskList = ({ tasks, loadTasks, setSelectedTask }) => {
+  const handleSelectTask = async (id) => {
     try {
       const task = await fetchTaskById(id);
-      console.log("Task Details:", task);
+      setSelectedTask(task);
     } catch (err) {
       console.error("Failed to view task", err);
       alert("Failed to view task.");
@@ -39,12 +39,18 @@ const TaskList = ({ tasks, loadTasks }) => {
                 {index + 1}. {task.title} - {task.description}
                 <button
                   onClick={() => {
-                    handleViewTask(task.id);
+                    handleSelectTask(task.id);
                   }}
                 >
                   View
                 </button>
-                <button>Edit</button>
+                <button
+                  onClick={() => {
+                    handleSelectTask(task.id);
+                  }}
+                >
+                  Edit
+                </button>
                 <button
                   onClick={() => {
                     handleDeleteTask(task.id);

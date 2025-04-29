@@ -1,17 +1,27 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   addTask,
   checkDuplicateTitle,
   deleteAllTasks,
 } from "../services/taskService";
 
-const TaskForm = ({ tasks, loadTasks }) => {
+const TaskForm = ({ tasks, loadTasks, selectedTask, setSelectedTask }) => {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
+
+  useEffect(() => {
+    if (selectedTask) {
+      setTitle(selectedTask.title);
+      setDescription(selectedTask.description);
+    } else {
+      resetFormState();
+    }
+  }, [selectedTask]);
 
   const resetFormState = async () => {
     setTitle("");
     setDescription("");
+    setSelectedTask(null);
   };
 
   const handleAddTask = async () => {

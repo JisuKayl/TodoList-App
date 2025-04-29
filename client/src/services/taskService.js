@@ -8,7 +8,6 @@ export const fetchTasks = async () => {
 
 export const fetchTaskById = async (id) => {
   const { data } = await axios.get(`${API_URL}/tasks/${id}`);
-  console.log(data);
   return data;
 };
 
@@ -16,7 +15,7 @@ export const addTask = async (title, description) => {
   await axios.post(`${API_URL}/tasks`, { title, description });
 };
 
-export const handleSave = async (id, title, description) => {
+export const updateTask = async (id, title, description) => {
   await axios.put(`${API_URL}/tasks/${id}`, {
     title,
     description,
