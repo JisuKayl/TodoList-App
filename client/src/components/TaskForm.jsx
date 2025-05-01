@@ -46,6 +46,9 @@ const TaskForm = ({
         return;
       }
 
+      const confirmAddTask = confirm("Are you sure you want to add this task?");
+      if (!confirmAddTask) return;
+
       await addTask(title, description);
       alert("Task added successfully!");
       resetFormState();
@@ -68,6 +71,11 @@ const TaskForm = ({
         alert("Title is already taken. Please choose a different title.");
         return;
       }
+
+      const confirmUpdateTask = confirm(
+        "Are you sure you want to update this task?"
+      );
+      if (!confirmUpdateTask) return;
 
       await updateTask(selectedTask.id, title, description);
       alert("Task updated successfully!");
