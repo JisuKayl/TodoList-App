@@ -1,7 +1,10 @@
 import React from "react";
+import { useTaskContext } from "../context/TaskContext";
 import { fetchTaskById, deleteTaskById } from "../services/taskService";
 
-const TaskList = ({ tasks, loadTasks, setSelectedTask, setMode }) => {
+const TaskList = () => {
+  const { tasks, loadTasks, setSelectedTask, setMode } = useTaskContext();
+
   const handleSelectTask = async (id) => {
     try {
       const task = await fetchTaskById(id);

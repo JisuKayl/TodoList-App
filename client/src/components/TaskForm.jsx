@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { useTaskContext } from "../context/TaskContext";
 import {
   addTask,
   updateTask,
@@ -6,14 +7,10 @@ import {
   deleteAllTasks,
 } from "../services/taskService";
 
-const TaskForm = ({
-  tasks,
-  loadTasks,
-  selectedTask,
-  setSelectedTask,
-  mode,
-  setMode,
-}) => {
+const TaskForm = () => {
+  const { tasks, loadTasks, selectedTask, setSelectedTask, mode, setMode } =
+    useTaskContext();
+
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
 
