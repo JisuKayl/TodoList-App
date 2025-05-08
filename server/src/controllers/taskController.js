@@ -23,7 +23,7 @@ exports.getAllTasks = async (req, res) => {
     ]);
 
     if (tasks.length === 0) {
-      res.status(404).json({ error: "No tasks found" });
+      return res.status(200).json({ tasks: [] });
     }
 
     const [totalTasks] = await db.query("SELECT COUNT(*) AS count FROM tasks");

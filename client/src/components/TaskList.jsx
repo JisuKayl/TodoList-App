@@ -3,7 +3,7 @@ import { useTaskContext } from "../context/TaskContext";
 import { fetchTaskById, deleteTaskById } from "../services/taskService";
 
 const TaskList = () => {
-  const { tasks, loadTasks, setSelectedTask, setMode } = useTaskContext();
+  const { tasks, loadTasks, setSelectedTask, setMode, page } = useTaskContext();
 
   const handleSelectTask = async (id) => {
     try {
@@ -23,7 +23,8 @@ const TaskList = () => {
       if (!confirmDelete) return;
 
       await deleteTaskById(id);
-      loadTasks();
+      alert("Task deleted successfully!");
+      loadTasks(page);
     } catch (err) {
       console.error("Failed to delete task", err);
       alert("Failed to delete task.");
@@ -38,7 +39,7 @@ const TaskList = () => {
         <ul>
           {tasks.map((task, index) => {
             return (
-              <li key={index}>
+              <li key={task.id}>
                 {index + 1}. {task.title} - {task.description}
                 <button
                   onClick={() => {

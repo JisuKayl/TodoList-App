@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import React, { createContext, useContext, useState, useEffect } from "react";
 import { fetchTasks } from "../services/taskService";
 
@@ -8,10 +9,15 @@ export const TaskProvider = ({ children }) => {
   const [selectedTask, setSelectedTask] = useState(null);
   const [mode, setMode] = useState("add");
 
-  const loadTasks = async () => {
+  const [page, setPage] = useState(1);
+  const [pagination, setPagination] = useState({ totalPages: 1 });
+
+  const loadTasks = async (pageToLoad = page) => {
     try {
-      const taskData = await fetchTasks();
-      setTasks(taskData);
+      const { tasks, pagination } = await fetchTasks(pageToLoad);
+      setTasks(tasks);
+      setPagination(pagination);
+      setPage(pageToLoad);
     } catch (err) {
       console.error("Failed to load tasks", err);
       alert("Failed to load tasks.");
@@ -19,12 +25,23 @@ export const TaskProvider = ({ children }) => {
   };
 
   useEffect(() => {
-    loadTasks();
+    loadTasks(page);
   }, []);
 
   return (
     <TaskContext.Provider
-      value={{ tasks, loadTasks, selectedTask, setSelectedTask, mode, setMode }}
+      value={{
+        tasks,
+        loadTasks,
+        selectedTask,
+        setSelectedTask,
+        mode,
+        setMode,
+        page,
+        setPage,
+        pagination,
+        setPagination,
+      }}
     >
       {children}
     </TaskContext.Provider>

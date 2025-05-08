@@ -8,8 +8,15 @@ import {
 } from "../services/taskService";
 
 const TaskForm = () => {
-  const { tasks, loadTasks, selectedTask, setSelectedTask, mode, setMode } =
-    useTaskContext();
+  const {
+    tasks,
+    loadTasks,
+    selectedTask,
+    setSelectedTask,
+    mode,
+    setMode,
+    page,
+  } = useTaskContext();
 
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
@@ -49,7 +56,7 @@ const TaskForm = () => {
       await addTask(title, description);
       alert("Task added successfully!");
       resetFormState();
-      loadTasks();
+      loadTasks(page);
     } catch (err) {
       console.error("Failed to add task", err);
       alert("Failed to add task. Please try again.");
@@ -77,7 +84,7 @@ const TaskForm = () => {
       await updateTask(selectedTask.id, title, description);
       alert("Task updated successfully!");
       resetFormState();
-      loadTasks();
+      loadTasks(page);
     } catch (err) {
       console.error("Failed to update task", err);
       alert("Failed to update task. Please try again.");
@@ -97,7 +104,7 @@ const TaskForm = () => {
       await deleteAllTasks();
       alert("All tasks deleted successfully!");
       resetFormState();
-      loadTasks();
+      loadTasks(page);
     } catch (err) {
       console.error("Failed to delete all tasks", err);
       alert("Failed to delete all tasks.");

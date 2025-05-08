@@ -1,8 +1,10 @@
 import axios from "axios";
 import { API_URL } from "../config/apiConfig";
 
-export const fetchTasks = async () => {
-  const { data } = await axios.get(`${API_URL}/tasks`);
+export const fetchTasks = async (page = 1, limit = 10) => {
+  const { data } = await axios.get(`${API_URL}/tasks`, {
+    params: { page, limit },
+  });
   return data;
 };
 
@@ -35,7 +37,9 @@ export const checkDuplicateTitle = async (
   excludeCurrentEditingId = null
 ) => {
   const { data } = await axios.get(`${API_URL}/tasks`);
-  return data.some(
+
+  const taskArray = Array.isArray(data) ? data : data.tasks;
+  return taskArray.some(
     (task) =>
       task.id !== excludeCurrentEditingId &&
       task.title.toLowerCase() === title.trim().toLowerCase()
