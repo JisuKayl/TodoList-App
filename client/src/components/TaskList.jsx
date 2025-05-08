@@ -1,9 +1,11 @@
 import React from "react";
 import { useTaskContext } from "../context/TaskContext";
 import { fetchTaskById, deleteTaskById } from "../services/taskService";
+import PaginationControls from "./PaginationControls";
 
 const TaskList = () => {
-  const { tasks, loadTasks, setSelectedTask, setMode, page } = useTaskContext();
+  const { tasks, loadTasks, setSelectedTask, setMode, page, pagination } =
+    useTaskContext();
 
   const handleSelectTask = async (id) => {
     try {
@@ -38,9 +40,10 @@ const TaskList = () => {
       ) : (
         <ul>
           {tasks.map((task, index) => {
+            const globalIndex = (page - 1) * pagination.limit + index + 1;
             return (
               <li key={task.id}>
-                {index + 1}. {task.title} - {task.description}
+                {globalIndex}. {task.title} - {task.description}
                 <button
                   onClick={() => {
                     handleSelectTask(task.id);
@@ -69,6 +72,7 @@ const TaskList = () => {
           })}
         </ul>
       )}
+      <PaginationControls />
     </div>
   );
 };

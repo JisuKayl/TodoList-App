@@ -26,7 +26,7 @@ export const TaskProvider = ({ children }) => {
 
   useEffect(() => {
     loadTasks(page);
-  }, []);
+  }, [page]);
 
   return (
     <TaskContext.Provider

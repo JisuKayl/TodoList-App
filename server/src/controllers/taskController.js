@@ -181,3 +181,30 @@ exports.deleteTaskById = async (req, res) => {
     res.status(500).json("Internal server error");
   }
 };
+
+exports.checkDuplicateTitle = async (req, res) => {
+  const { title, id } = req.query;
+
+  const trimmedTitle = title.trim();
+  const excludeId = id ? parseInt(id, 10) : 0;
+
+  if (!trimmedTitle) {
+    return res.status(400).json({ error: "Title is required" });
+  }
+
+  if (isNaN(excludeId)) {
+    return res.status(400).json({ error: "Invalid ID" });
+  }
+
+  try {
+    const [existing] = await db.query(
+      "SELECT * FROM tasks WHERE title = ? AND id != ?",
+      [trimmedTitle, excludeId]
+    );
+
+    res.status(200).json({ isDuplicate: existing.length > 0 });
+  } catch (err) {
+    console.error("Error in checking duplicate title", err);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+};

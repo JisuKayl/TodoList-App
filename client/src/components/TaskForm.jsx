@@ -37,6 +37,15 @@ const TaskForm = () => {
     setMode("add");
   };
 
+  const isTitleDuplicate = async (title, excludeId = null) => {
+    const isDuplicate = await checkDuplicateTitle(title, excludeId);
+    if (isDuplicate) {
+      alert("Title is already taken. Please choose a different title.");
+      return true;
+    }
+    return false;
+  };
+
   const handleAddTask = async () => {
     if (!title.trim()) {
       alert("Title is required.");
@@ -44,11 +53,8 @@ const TaskForm = () => {
     }
 
     try {
-      const isDuplicate = await checkDuplicateTitle(title);
-      if (isDuplicate) {
-        alert("Title is already taken. Please choose a different title.");
-        return;
-      }
+      const isDuplicate = await isTitleDuplicate(title);
+      if (isDuplicate) return;
 
       const confirmAddTask = confirm("Are you sure you want to add this task?");
       if (!confirmAddTask) return;
@@ -70,11 +76,8 @@ const TaskForm = () => {
     }
 
     try {
-      const isDuplicate = await checkDuplicateTitle(title, selectedTask.id);
-      if (isDuplicate) {
-        alert("Title is already taken. Please choose a different title.");
-        return;
-      }
+      const isDuplicate = await isTitleDuplicate(title, selectedTask.id);
+      if (isDuplicate) return;
 
       const confirmUpdateTask = confirm(
         "Are you sure you want to update this task?"

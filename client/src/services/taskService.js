@@ -32,16 +32,9 @@ export const deleteTaskById = async (id) => {
   await axios.delete(`${API_URL}/tasks/${id}`);
 };
 
-export const checkDuplicateTitle = async (
-  title,
-  excludeCurrentEditingId = null
-) => {
-  const { data } = await axios.get(`${API_URL}/tasks`);
-
-  const taskArray = Array.isArray(data) ? data : data.tasks;
-  return taskArray.some(
-    (task) =>
-      task.id !== excludeCurrentEditingId &&
-      task.title.toLowerCase() === title.trim().toLowerCase()
-  );
+export const checkDuplicateTitle = async (title, excludeId = null) => {
+  const { data } = await axios.get(`${API_URL}/tasks/check-duplicate`, {
+    params: { title, id: excludeId },
+  });
+  return data.isDuplicate;
 };
