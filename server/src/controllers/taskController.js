@@ -1,9 +1,43 @@
 const db = require("../config/db");
 
 exports.getAllTasks = async (req, res) => {
+  const { page = 1, limit = 10 } = req.query;
+
+  const parsedPage = parseInt(page, 10);
+  const parsedLimit = parseInt(limit, 10);
+
+  if (isNaN(parsedPage) || parsedPage < 1) {
+    return res.status(400).json({ error: "Invalid page number" });
+  }
+
+  if (isNaN(parsedLimit) || parsedLimit < 1) {
+    return res.status(400).json({ error: "Invalid limit number" });
+  }
+
+  const offset = (parsedPage - 1) * parsedLimit;
+
   try {
-    const [task] = await db.query("SELECT * FROM tasks");
-    res.status(200).json(task);
+    const [tasks] = await db.query("SELECT * FROM tasks LIMIT ? OFFSET ?", [
+      parsedLimit,
+      offset,
+    ]);
+
+    if (tasks.length === 0) {
+      res.status(404).json({ error: "No tasks found" });
+    }
+
+    const [totalTasks] = await db.query("SELECT COUNT(*) AS count FROM tasks");
+    const totalTaskCount = totalTasks[0].count;
+
+    res.status(200).json({
+      tasks,
+      pagination: {
+        page: parsedPage,
+        limit: parsedLimit,
+        total: totalTaskCount,
+        totalPages: Math.ceil(totalTaskCount / parsedLimit),
+      },
+    });
   } catch (err) {
     console.error("Error in fetching tasks", err);
     res.status(500).json({ error: "Internal Server Error" });
