@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { useTaskContext } from "../context/TaskContext";
 import {
   addTask,
   updateTask,
@@ -6,14 +7,10 @@ import {
   deleteAllTasks,
 } from "../services/taskService";
 
-const TaskForm = ({
-  tasks,
-  loadTasks,
-  selectedTask,
-  setSelectedTask,
-  mode,
-  setMode,
-}) => {
+const TaskForm = () => {
+  const { tasks, loadTasks, selectedTask, setSelectedTask, mode, setMode } =
+    useTaskContext();
+
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
 
@@ -46,6 +43,9 @@ const TaskForm = ({
         return;
       }
 
+      const confirmAddTask = confirm("Are you sure you want to add this task?");
+      if (!confirmAddTask) return;
+
       await addTask(title, description);
       alert("Task added successfully!");
       resetFormState();
@@ -68,6 +68,11 @@ const TaskForm = ({
         alert("Title is already taken. Please choose a different title.");
         return;
       }
+
+      const confirmUpdateTask = confirm(
+        "Are you sure you want to update this task?"
+      );
+      if (!confirmUpdateTask) return;
 
       await updateTask(selectedTask.id, title, description);
       alert("Task updated successfully!");
