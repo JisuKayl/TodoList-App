@@ -12,12 +12,11 @@ exports.getAllTasks = async (req, res) => {
 
 exports.getTaskById = async (req, res) => {
   const { id } = req.params;
+  const parsedId = parseInt(id, 10);
 
-  if (isNaN(id)) {
+  if (isNaN(parsedId)) {
     return res.status(400).json({ error: "Invalid ID" });
   }
-
-  const parsedId = parseInt(id, 10);
 
   try {
     const [task] = await db.query("SELECT * FROM tasks WHERE id = ?", [
@@ -72,18 +71,17 @@ exports.updateTask = async (req, res) => {
   const { id } = req.params;
   const { title, description } = req.body;
 
+  const parsedId = parseInt(id, 10);
   const trimmedTitle = title.trim();
   const trimmedDesc = description?.trim() || "(No Description)";
 
-  if (isNaN(id)) {
+  if (isNaN(parsedId)) {
     return res.status(400).json({ error: "Invalid ID" });
   }
 
   if (!trimmedTitle) {
     return res.status(400).json({ error: "Title is required" });
   }
-
-  const parsedId = parseInt(id, 10);
 
   try {
     const [existingTitle] = await db.query(
@@ -107,7 +105,7 @@ exports.updateTask = async (req, res) => {
     res.status(200).json({ message: "Task updated successfully" });
   } catch (err) {
     console.error("Error in updating task", err);
-    res.status(500).json("Internal server error");
+    res.status(500).json({ error: "Internal server error" });
   }
 };
 
@@ -128,12 +126,11 @@ exports.deleteAllTasks = async (req, res) => {
 
 exports.deleteTaskById = async (req, res) => {
   const { id } = req.params;
+  const parsedId = parseInt(id, 10);
 
-  if (isNaN(id)) {
+  if (isNaN(parsedId)) {
     return res.status(400).json({ error: "Invalid ID" });
   }
-
-  const parsedId = parseInt(id, 10);
 
   try {
     const [result] = await db.query("DELETE FROM tasks WHERE id = ?", [
