@@ -114,6 +114,16 @@ const TaskForm = () => {
     }
   };
 
+  const handleEnterKey = (e) => {
+    if (e.key === "Enter") {
+      if (mode === "add") {
+        handleAddTask();
+      } else if (mode === "edit") {
+        handleUpdateTask();
+      }
+    }
+  };
+
   return (
     <div>
       <div>
@@ -123,6 +133,7 @@ const TaskForm = () => {
           value={title}
           onChange={(e) => setTitle(e.target.value)}
           placeholder="title"
+          onKeyDown={handleEnterKey}
           disabled={mode === "view"}
         />
       </div>
@@ -133,6 +144,7 @@ const TaskForm = () => {
           value={description}
           onChange={(e) => setDescription(e.target.value)}
           placeholder="description"
+          onKeyDown={handleEnterKey}
           disabled={mode === "view"}
         />
       </div>
