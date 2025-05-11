@@ -1,14 +1,22 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useTaskContext } from "../context/TaskContext";
 
 const PaginationControls = () => {
   const { page, setPage, pagination, loadTasks } = useTaskContext();
   const { totalPages = 1 } = pagination || {};
+  const [inputPage, setInputPage] = useState(page);
+
+  useEffect(() => {
+    setInputPage(page);
+  }, [page]);
 
   const handlePageChange = (newPage) => {
     if (newPage >= 1 && newPage <= totalPages) {
       setPage(newPage);
       loadTasks(newPage);
+    } else {
+      alert(`Please input a valid page between 1 and  ${totalPages}`);
+      setInputPage(page);
     }
   };
 
@@ -31,7 +39,25 @@ const PaginationControls = () => {
         Previous
       </button>
       <span>
-        Page {page} of {totalPages}
+        Page{" "}
+        <input
+          type="number"
+          value={inputPage}
+          onChange={(e) => {
+            setInputPage(e.target.value);
+          }}
+          onBlur={() => {
+            setInputPage(page);
+          }}
+          onKeyDown={(e) => {
+            if (e.key === "Enter") {
+              handlePageChange(Number(inputPage));
+            }
+          }}
+          min={1}
+          max={totalPages}
+        />{" "}
+        of {totalPages}
       </span>
       <button
         onClick={() => {
