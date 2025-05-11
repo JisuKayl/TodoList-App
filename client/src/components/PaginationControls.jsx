@@ -3,7 +3,7 @@ import { useTaskContext } from "../context/TaskContext";
 
 const PaginationControls = () => {
   const { page, setPage, pagination, loadTasks } = useTaskContext();
-  const { totalPages } = pagination;
+  const { totalPages = 1 } = pagination || {};
 
   const handlePageChange = (newPage) => {
     if (newPage >= 1 && newPage <= totalPages) {
